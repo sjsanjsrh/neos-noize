@@ -6,6 +6,25 @@
  * @requires three.js
  */
 
+/**
+ * @class PanoramaPreview
+ * @example
+ * const panorama = new PanoramaPreview(document.getElementById("panorama"));
+ * panorama.loadImage(imageurl)
+ * .then(() => {
+ *    panorama.enable();
+ * });
+ * panorama.beforeRender = (dt) => {
+ *   panorama.yaw += dt*speed;
+ * }
+ * @property {number} pitch camera angle
+ * @property {number} yaw camera angle
+ * @property {number} roll camera angle
+ * @property {function} beforeRender call before render()
+ * @property {number} fov camera fov
+ * @property {canvas} domElement
+ * @param {canvas} domElement
+ */
 class PanoramaPreview{
     /** @private */
     _fov = 90;              //default value
@@ -115,6 +134,12 @@ class PanoramaPreview{
      * @param {String} image image url
      * @returns {Promise} Promise object represents on the loaded texture
      * @promise {THREE.Texture} loaded texture
+     * @fail {undefined} fail to load image
+     * @example
+     * panorama.loadImage(imageurl)
+     * .then((texture) => {
+     *   panorama.enable();
+     * })
      */
     loadImage(image) {
         return new Promise((resolve, reject) => {
