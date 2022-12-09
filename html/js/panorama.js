@@ -1,23 +1,43 @@
+/**
+ * simple panorama viewer
+ * @file panorama.js
+ * @author Sinduy <sjsanjsrh@naver.com>
+ * @version 1.0.0
+ * @requires three.js
+ */
+
 class PanoramaPreview{
-    static geometry = new THREE.SphereGeometry(1, 24, 8);
+    /** @private */
     _fov = 90;              //default value
+    /** @private */
     _resolution = 192;      //default value
+
+    /** @member {number} camera angle */
     pitch = 0;
+    /** @member {number} camera angle */
     yaw = 0;
+    /** @member {number} camera angle */
     roll = 0;
 
+    /** @member {function} call before render() */
     beforeRender = (dt) => {};
 
+    /** @type {number} camera fov */
+    static get fov() {}
     get fov(){
         return this._camera.fov;
     }
     set fov(value){
         this._camera.fov = value;
     }
+    /** @return {canvas} domElement*/
     get domElement(){
         return this._renderer.domElement;
     }
-
+    /**
+     * 
+     * @param {canvas} domElement
+     */
     constructor(domElement) {
 
         this._scene = new THREE.Scene();
@@ -30,7 +50,7 @@ class PanoramaPreview{
         
         this._privtime = performance.now();
         this._animate = () => {
-            if(this._disable){
+            if(this._disable){ //stop rendering
                 this._renderer.render(this._scene, this._camera);
                 return;
             }
@@ -40,7 +60,9 @@ class PanoramaPreview{
             this._privtime = nowtime;
 
             this.beforeRender(dt);
-            requestAnimationFrame(this._animate);
+            requestAnimationFrame(this._animate); //call next frame
+
+            //set camera rotation
             this._camera.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), this.yaw);
             this._camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), this.pitch);
             this._camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), this.roll);
@@ -49,6 +71,10 @@ class PanoramaPreview{
         }
     }
 
+    /**
+     * set size of camera view fit in the resolution
+     * @param {number} resolution max size of view
+     */
     setResolution(resolution){
         const radio = this.domElement.clientWidth/this.domElement.clientHeight;
         let h = 1, v = 1;
@@ -59,20 +85,37 @@ class PanoramaPreview{
         this.setSize(resolution*h, resolution*v);
     }
     
+    /**
+     * set size of camera view
+     * @param {number} width 
+     * @param {number} height 
+     */
     setSize(width, height){
         this._renderer.setSize(width, height, false);
         this._camera.aspect=width/height;
     }
 
+    /**
+     * start randering
+     */
     enable() {
         this._disable = false;
         this._animate();
     }
 
+    /**
+     * stop randering
+     */
     disable() {
         this._disable = true;
     }
 
+    /**
+     * load image and set it as background
+     * @param {String} image image url
+     * @returns {Promise} Promise object represents on the loaded texture
+     * @promise {THREE.Texture} loaded texture
+     */
     loadImage(image) {
         return new Promise((resolve, reject) => {
             const loader = new THREE.TextureLoader();
