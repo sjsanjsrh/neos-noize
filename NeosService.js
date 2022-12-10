@@ -39,7 +39,7 @@ class NeosService{
         const filePath = __dirname+"/"+config.sessions_file;
         let data = sessions.slice()
         data = data.map(e => {
-            if(e.thumbnail !== undefined)
+            if(!e.thumbnail)
                 e.thumbnail = this.neosDBToLocalURL(e.thumbnail);
             return e;
         });
@@ -108,7 +108,7 @@ class NeosService{
             .then(res => res.json())
             .then((json) => {
                 json.forEach(e => { //NeosDB to HTTP thumbnail URL in session object
-                    if(e.thumbnail !== undefined)
+                    if(!e.thumbnail)
                         e.thumbnail = this.neos.NeosDBToHttp(e.thumbnail);
                 });
                 resolve(json);
