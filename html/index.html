@@ -19,7 +19,7 @@
             fetch('/sessions.json')
                 .then((response) => response.json())
                 .then((data) => {
-                    for(let i = 0; i < 10; i++){
+                    for(let i = 0; i < 16; i++){
                         let index = Math.floor(Math.random()*data.length);
                         while(data[index].thumbnail === undefined){
                             index = Math.floor(Math.random()*data.length);
@@ -29,6 +29,7 @@
                         contents.appendChild(canvas);
                         const pano = createPanoramaViewer(canvas, data[index].thumbnail);
                         pano.setResolution(256);
+                        // thumbnail data
                         pano.thumbnail = data[index].thumbnail;
                         pano.reload = () => {
                             pano.loadImage(pano.thumbnail);
