@@ -29,8 +29,8 @@
                         contents.appendChild(canvas);
                         const pano = createPanoramaViewer(canvas, data[index].thumbnail);
                         pano.setResolution(256);
-                        // thumbnail data
-                        pano.thumbnail = data[index].thumbnail;
+                        // debug data
+                        pano.data = data[index];
                         pano.reload = () => {
                             pano.loadImage(pano.thumbnail);
                         }

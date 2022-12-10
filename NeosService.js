@@ -39,8 +39,8 @@ class NeosService{
         const filePath = __dirname+"/"+config.sessions_file;
         let data = sessions.slice()
         data = data.map(e => {
-            if(!e.thumbnail)
-                e.thumbnail = this.neosDBToLocalURL(e.thumbnail);
+            if(NeosService.chackLink(e.thumbnail))
+                e.thumbnail = NeosService.neosDBToLocalURL(e.thumbnail);
             return e;
         });
         fs.WriteStream(filePath).write(JSON.stringify(data));
@@ -51,7 +51,7 @@ class NeosService{
      * @param {String} url NeosDB URL
      * @returns {String} Local URL
     */
-    neosDBToLocalURL(url){
+    static neosDBToLocalURL(url){
         const filename = url.split("/").pop();
         return config.thumbnail_url+filename;
     }
@@ -65,7 +65,7 @@ class NeosService{
         const filenames = fs.readdirSync(dir);
         filenames.forEach(file => {
             if(!sessions.some(e => {
-                if(e.thumbnail !== undefined){
+                if(NeosService.chackLink(e.thumbnail)){
                     const filename = e.thumbnail.split("/").pop();
                     return filename === file;
                 }
@@ -82,7 +82,7 @@ class NeosService{
     updateSessionsThumbnail(sessions){
         const dir = __dirname+"/"+config.thumbnail_dir;
         sessions.forEach(e => {
-            if(e.thumbnail !== undefined){
+            if(NeosService.chackLink(e.thumbnail)){
                 const url = e.thumbnail;
                 const filename = url.split("/").pop();
                 if(!fs.existsSync(dir+filename))
@@ -108,12 +108,24 @@ class NeosService{
             .then(res => res.json())
             .then((json) => {
                 json.forEach(e => { //NeosDB to HTTP thumbnail URL in session object
-                    if(!e.thumbnail)
-                        e.thumbnail = this.neos.NeosDBToHttp(e.thumbnail);
+                    if(NeosService.chackLink(e.thumbnail)){
+                        e.priv_thumbnail = e.thumbnail;
+                        if(e.thumbnail.startsWith("neosdb:///"))
+                            e.thumbnail = this.neos.NeosDBToHttp(e.thumbnail);
+                    }
+                        
                 });
                 resolve(json);
             })
         });
+    }
+
+    /**
+     * chack avaliable link
+     * @param {String} link link
+     */
+    static chackLink(link){
+        return (link !== undefined && link !== null && link !== "" && link !== config.thumbnail_url)
     }
 }
 
