@@ -1,0 +1,23 @@
+{
+  "name": "neos-noize",
+  "version": "1.0.0",
+  "description": "네오스에 로그인한 특정 유저, 특정 세션의 유저 참가, 채팅을 할 수 있는 디스코드 봇을 제작한다.",
+  "main": "NeosNoize.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@bombitmanbomb/neosjs": "^1.15.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjsanjsrh/neos-noize.git"
+  },
+  "author": "Sinduy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sjsanjsrh/neos-noize/issues"
+  },
+  "homepage": "https://github.com/sjsanjsrh/neos-noize#readme"
+}
