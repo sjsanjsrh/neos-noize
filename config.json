@@ -1,4 +1,6 @@
 {
     "username": "",
-    "password": ""
+    "password": "",
+    "express": true,
+    "express_port": 80
 }

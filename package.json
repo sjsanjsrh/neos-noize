@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "네오스에 로그인한 특정 유저, 특정 세션의 유저 참가, 채팅을 할 수 있는 디스코드 봇을 제작한다.",
   "main": "NeosNoize.js",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.18.2"
+  },
   "devDependencies": {
     "@bombitmanbomb/neosjs": "^1.15.2"
   },

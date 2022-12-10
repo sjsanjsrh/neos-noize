@@ -5,7 +5,7 @@
 */
 
 const Neos = require("@bombitmanbomb/neosjs");
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 
@@ -24,13 +24,24 @@ class NeosService{
     run(){
         this.getSessions();
     }
+
+    /**
+     * Get sessions
+     * @returns {Promise} session object
+     */
     getSessions(){
         let url = "https://api.neos.com/api/sessions"
-        fetch(url, { method: "Get" })
-        .then(res => res.json())
-        .then((json) => {
-            console.log(json[0].thumbnail);
-        })
+        new Promise((resolve, reject) => {
+            fetch(url, { method: "Get" })
+            .then(res => res.json())
+            .then((json) => {
+                json.forEach(e => { //NeosDB to HTTP thumbnail URL in session object
+                    if(e.thumbnail !== undefined)
+                        e.thumbnail = this.neos.NeosDBToHttp(e.thumbnail);
+                });
+                resolve(json);
+            })
+        });
     }
 }
 
