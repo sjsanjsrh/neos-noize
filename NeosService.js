@@ -5,6 +5,7 @@
 */
 
 const Neos = require("@bombitmanbomb/neosjs");
+const fetch = require('node-fetch')
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
 
@@ -21,12 +22,15 @@ class NeosService{
      * Run NeosService
     */
     run(){
-        return this.getSessions();
+        this.getSessions();
     }
     getSessions(){
-        return this.neos.Login(config.username,config.password).then(()=>{
-            return this.neos.getSessions();
-        });
+        let url = "https://api.neos.com/api/sessions"
+        fetch(url, { method: "Get" })
+        .then(res => res.json())
+        .then((json) => {
+            console.log(json[0].thumbnail);
+        })
     }
 }
 
