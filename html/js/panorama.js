@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.0.1
+ * @version 1.0.2
  * @requires three.js
  */
 
@@ -28,8 +28,6 @@
 class PanoramaPreview{
     /** @private */
     _fov = 90;              //default value
-    /** @private */
-    _resolution = 192;      //default value
 
     /** @member {number} camera angle */
     pitch = 0;
@@ -63,7 +61,7 @@ class PanoramaPreview{
         this._camera = new THREE.PerspectiveCamera(this._fov, 1, 0.01, 1000);
 
         this._renderer = new THREE.WebGLRenderer({canvas: domElement});
-        this.setResolution(this._resolution);
+        this.setResolution();
         
         this._disable = true;
         
