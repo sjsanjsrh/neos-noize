@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.0.2
+ * @version 1.1.0
  * @requires three.js
  */
 
@@ -49,26 +49,42 @@ class PanoramaPreview{
     }
     /** @return {canvas} domElement*/
     get domElement(){
-        return this._renderer.domElement;
+        return this._domElement;
     }
     /**
      * 
-     * @param {canvas} domElement
+     * @param {HtmlElement} domElement
      */
     constructor(domElement) {
 
         this._scene = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera(this._fov, 1, 0.01, 1000);
 
-        this._renderer = new THREE.WebGLRenderer({canvas: domElement});
+        this._canvas = document.createElement("canvas")
+        this._renderer = new THREE.WebGLRenderer({canvas: this._canvas});
+        domElement.innerHTML = "";
+        domElement.appendChild(this._canvas);
+        this._domElement = domElement;
         this.setResolution();
         
         this._disable = true;
         
         this._privtime = performance.now();
+
+        this._img = new Image();
+        this._img.style.display = 'none';
+        domElement.appendChild(this._img);
+        this._img.onload = () => {
+            this._renderer.forceContextLoss();
+        }
+
         this._animate = () => {
             if(this._disable){ //stop rendering
                 this._renderer.render(this._scene, this._camera);
+                if(this._domElement.firstElementChild === this._canvas)
+                    this._img.src = this._domElement.firstElementChild.toDataURL();
+                    this._img.style.display = '';
+                    this._canvas.style.display = 'none';
                 return;
             }
 
@@ -121,7 +137,17 @@ class PanoramaPreview{
      * start randering
      */
     enable() {
-        this._disable = false;
+        if(this._disable){
+            this._disable = false;
+            let newCanv = document.createElement("canvas");
+            this._domElement.replaceChild(newCanv, this._canvas);
+            this._canvas = newCanv;
+            this._img.style.display = 'none';
+            this._canvas.style.display = '';
+            this._renderer = new THREE.WebGLRenderer({canvas: this._canvas});
+            this.setResolution();
+        }
+        
         this._animate();
     }
 

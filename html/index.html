@@ -5,7 +5,9 @@
         <title>neos sessions</title>
         <style>
             body { margin: 0; }
-            canvas.thumbnail{ width: 512px; height: 400px; }
+            .thumbnail{ width: 128px; height: 100px; }
+            .thumbnail *{ width: 100%; height: 100%; }
+            div#contents { display: flex; flex-wrap: wrap; }
         </style>
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.js"></script>
@@ -19,27 +21,38 @@
             fetch('/sessions.json')
                 .then((response) => response.json())
                 .then((data) => {
-                    for(let i = 0; i < 16; i++){
-                        let index = Math.floor(Math.random()*data.length);
-                        while(data[index].thumbnail === undefined){
-                            index = Math.floor(Math.random()*data.length);
+                    let index = 0;
+                    let rep = setInterval(() => {
+                        for(let i = 0; i < 8; i++){
+                            addCanvas(data);
                         }
-                        const canvas = document.createElement("canvas");
-                        canvas.classList.add("thumbnail");
-                        contents.appendChild(canvas);
-                        const pano = createPanoramaViewer(canvas, data[index].thumbnail);
-                        pano.setResolution();
-                        // debug data
-                        pano.data = data[index];
-                        pano.reload = () => {
-                            pano.loadImage(pano.thumbnail);
+                        index += 8;
+                        if(index >= 128){
+                            clearInterval(rep)
                         }
-                        panos.push(pano);
-                    }
+                    }, 1000);
+                    
                 });
+            function addCanvas(data){
+                let index = Math.floor(Math.random()*data.length);
+                while(data[index].thumbnail === undefined){
+                    index = Math.floor(Math.random()*data.length);
+                }
+                const div = document.createElement("div");
+                div.classList.add("thumbnail");
+                contents.appendChild(div);
+                const pano = createPanoramaViewer(div, data[index].thumbnail);
+                pano.setResolution();
+                // debug data
+                pano.data = data[index];
+                pano.reload = () => {
+                    pano.loadImage(pano.thumbnail);
+                }
+                panos.push(pano);
+            }
 
-            function createPanoramaViewer(canvas, img){
-                const pano = new PanoramaPreview(canvas);
+            function createPanoramaViewer(div, img){
+                const pano = new PanoramaPreview(div);
                 pano.loadImage(img).then(()=>{
                     //pano.enable();
                 });
@@ -47,15 +60,15 @@
                 let tx = 0;
                 let ty = 0;
                 let speed = 1;
-                canvas.onmousemove = function(event){
-                    const x = event.offsetX/canvas.clientWidth-0.5;
-                    const y = event.offsetY/canvas.clientHeight-0.5;
+                div.onmousemove = function(event){
+                    const x = event.offsetX/div.clientWidth-0.5;
+                    const y = event.offsetY/div.clientHeight-0.5;
                     tx = -x*1.95;
                     ty = -y*1.95;
                     speed = 1;
                     pano.enable();
                 }
-                canvas.onmouseout = function(event){
+                div.onmouseout = function(event){
                     tx = ty = speed = 0;
                 }
                 pano.beforeRender = (dt) => {
