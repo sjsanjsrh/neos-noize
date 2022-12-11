@@ -5,7 +5,7 @@
         <title>neos sessions</title>
         <style>
             body { margin: 0; }
-            canvas.thumbnail{ width: 256px; height: 200px; }
+            canvas.thumbnail{ width: 512px; height: 400px; }
         </style>
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.js"></script>
@@ -28,7 +28,7 @@
                         canvas.classList.add("thumbnail");
                         contents.appendChild(canvas);
                         const pano = createPanoramaViewer(canvas, data[index].thumbnail);
-                        pano.setResolution(256);
+                        pano.setResolution();
                         // debug data
                         pano.data = data[index];
                         pano.reload = () => {
@@ -41,26 +41,34 @@
             function createPanoramaViewer(canvas, img){
                 const pano = new PanoramaPreview(canvas);
                 pano.loadImage(img).then(()=>{
-                    pano.enable();
+                    //pano.enable();
                 });
                 let px = 0;
                 let tx = 0;
                 let ty = 0;
+                let speed = 1;
                 canvas.onmousemove = function(event){
                     const x = event.offsetX/canvas.clientWidth-0.5;
                     const y = event.offsetY/canvas.clientHeight-0.5;
                     tx = -x*1.95;
                     ty = -y*1.95;
+                    speed = 1;
+                    pano.enable();
                 }
                 canvas.onmouseout = function(event){
-                    tx = ty = 0;
+                    tx = ty = speed = 0;
                 }
                 pano.beforeRender = (dt) => {
-                    const alpha = 0.08;
+                    const alpha = 0.05;
                     pano.pitch = pano.pitch*(1-alpha) + ty*alpha;
                     pano.yaw -= px;
                     px = px*(1-alpha) + tx*alpha;
-                    pano.yaw += 1*dt+px;
+                    pano.yaw += speed*dt+px;
+
+                    const err = Math.abs(px-tx)+Math.abs(pano.pitch-ty);
+                    if(err < 0.0001 && speed < 0.0001){
+                        pano.disable();
+                    }
                 }
                 return pano;
             }
