@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.1.1
+ * @version 1.1.2
  * @requires three.js
  */
 
@@ -76,6 +76,8 @@ class PanoramaPreview{
         domElement.appendChild(this._img);
 
         this._img.onload = () => {
+            this._img.style.display = '';
+            this._canvas.style.display = 'none';
             this._renderer.forceContextLoss();
         }
 
