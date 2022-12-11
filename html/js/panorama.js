@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.1.0
+ * @version 1.1.1
  * @requires three.js
  */
 
@@ -74,17 +74,25 @@ class PanoramaPreview{
         this._img = new Image();
         this._img.style.display = 'none';
         domElement.appendChild(this._img);
+
         this._img.onload = () => {
             this._renderer.forceContextLoss();
         }
 
+        this._canvas.addEventListener('webglcontextlost', (event) => {
+            this._img.style.display = '';
+            this._canvas.style.display = 'none';
+        });
+
+        this._canvas.addEventListener('webglcontextrestored', (event) => {
+            this._img.style.display = 'none';
+            this._canvas.style.display = '';
+        });
+
         this._animate = () => {
             if(this._disable){ //stop rendering
                 this._renderer.render(this._scene, this._camera);
-                if(this._domElement.firstElementChild === this._canvas)
-                    this._img.src = this._domElement.firstElementChild.toDataURL();
-                    this._img.style.display = '';
-                    this._canvas.style.display = 'none';
+                this._img.src = this._domElement.firstElementChild.toDataURL();
                 return;
             }
 
@@ -139,13 +147,7 @@ class PanoramaPreview{
     enable() {
         if(this._disable){
             this._disable = false;
-            let newCanv = document.createElement("canvas");
-            this._domElement.replaceChild(newCanv, this._canvas);
-            this._canvas = newCanv;
-            this._img.style.display = 'none';
-            this._canvas.style.display = '';
-            this._renderer = new THREE.WebGLRenderer({canvas: this._canvas});
-            this.setResolution();
+            this._renderer.forceContextRestore();
         }
         
         this._animate();
