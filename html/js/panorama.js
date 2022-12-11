@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.1.2
+ * @version 1.1.3
  * @requires three.js
  */
 
@@ -39,6 +39,11 @@ class PanoramaPreview{
     /** @member {function} call before render() */
     beforeRender = (dt) => {};
 
+    /** @private */
+    _WebGL_Active = false;
+    /** @private */
+    static _ActiveWebGLClasses = 0;
+
     /** @type {number} camera fov */
     static get fov() {}
     get fov(){
@@ -51,12 +56,21 @@ class PanoramaPreview{
     get domElement(){
         return this._domElement;
     }
+    /** @returns {boolean} */
+    get WebGL_Active(){
+        return this._WebGL_Active;
+    }
+    /** @returns {number} number of active webgl classes*/
+    static get ActiveWebGLClasses(){
+        return this._ActiveWebGLClasses;
+    }
+
     /**
      * 
      * @param {HtmlElement} domElement
      */
     constructor(domElement) {
-
+        this._setWebglState(true);
         this._scene = new THREE.Scene();
         this._camera = new THREE.PerspectiveCamera(this._fov, 1, 0.01, 1000);
 
@@ -84,11 +98,13 @@ class PanoramaPreview{
         this._canvas.addEventListener('webglcontextlost', (event) => {
             this._img.style.display = '';
             this._canvas.style.display = 'none';
+            this._setWebglState(false);
         });
 
         this._canvas.addEventListener('webglcontextrestored', (event) => {
             this._img.style.display = 'none';
             this._canvas.style.display = '';
+            this._setWebglState(true);
         });
 
         this._animate = () => {
@@ -111,6 +127,13 @@ class PanoramaPreview{
             this._camera.rotateOnAxis(new THREE.Vector3(0, 0, 1), this.roll);
 
             this._renderer.render(this._scene, this._camera);
+        }
+    }
+
+    _setWebglState(state){
+        if(state!=this._WebGL_Active){
+            this._WebGL_Active = state;
+            this._ActiveWebGLClasses += state ? 1 : -1;
         }
     }
 
@@ -149,6 +172,7 @@ class PanoramaPreview{
     enable() {
         if(this._disable){
             this._disable = false;
+            this._setWebglState(true);
             this._renderer.forceContextRestore();
         }
         

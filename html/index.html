@@ -22,22 +22,19 @@
                 .then((response) => response.json())
                 .then((data) => {
                     let index = 0;
-                    let rep = setInterval(() => {
-                        for(let i = 0; i < 8; i++){
-                            addCanvas(data);
+                    let rep = () => {
+                        if(index < data.length){
+                            requestAnimationFrame(rep);
                         }
-                        index += 8;
-                        if(index >= 128){
-                            clearInterval(rep)
+                        if(6>(PanoramaPreview.ActiveWebGLClasses)){
+                            addCanvas(data, index);
+                            index++;
                         }
-                    }, 1000);
+                    };
+                    rep();
                     
                 });
-            function addCanvas(data){
-                let index = Math.floor(Math.random()*data.length);
-                while(data[index].thumbnail === undefined){
-                    index = Math.floor(Math.random()*data.length);
-                }
+            function addCanvas(data, index){
                 const div = document.createElement("div");
                 div.classList.add("thumbnail");
                 contents.appendChild(div);

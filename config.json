@@ -1,7 +1,7 @@
 {
     "username": "",
     "password": "",
-    "express": true,
+    "express": false,
     "express_port": 80,
     "thumbnail_dir": "html/thumbnails/",
     "thumbnail_url": "thumbnails/",
