@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.0.0
+ * @version 1.0.1
  * @requires three.js
  */
 
@@ -65,7 +65,7 @@ class PanoramaPreview{
         this._renderer = new THREE.WebGLRenderer({canvas: domElement});
         this.setResolution(this._resolution);
         
-        this._disable = false;
+        this._disable = true;
         
         this._privtime = performance.now();
         this._animate = () => {
@@ -92,16 +92,21 @@ class PanoramaPreview{
 
     /**
      * set size of camera view fit in the resolution
-     * @param {number} resolution max size of view
+     * @param {number} resolution max size of view if undefined, use default value
      */
     setResolution(resolution){
-        const radio = this.domElement.clientWidth/this.domElement.clientHeight;
-        let h = 1, v = 1;
-        if(radio > 1)
-            v = 1/radio;
-        else
-            h = radio
-        this.setSize(resolution*h, resolution*v);
+        if(resolution === undefined){
+            this.setSize(this.domElement.clientWidth, this.domElement.clientHeight);
+        }
+        else{
+            const radio = this.domElement.clientWidth/this.domElement.clientHeight;
+            let h = 1, v = 1;
+            if(radio > 1)
+                v = 1/radio;
+            else
+                h = radio
+            this.setSize(resolution*h, resolution*v);
+        }
     }
     
     /**
