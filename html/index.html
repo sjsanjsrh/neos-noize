@@ -41,10 +41,12 @@
             panoramaLoader();
             const io = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
+                    if(entry.isIntersecting) {
                         entry.target.load();
                     }
                 });
+            },{
+            rootMargin: "512px",
             });
 
             fetch('/sessions.json')
