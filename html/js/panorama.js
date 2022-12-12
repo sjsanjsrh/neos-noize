@@ -2,7 +2,7 @@
  * simple panorama viewer
  * @file panorama.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.1.3
+ * @version 1.1.4
  * @requires three.js
  */
 
@@ -65,7 +65,7 @@ class PanoramaPreview{
         this._renderer = new THREE.WebGLRenderer({canvas: this._canvas});
         domElement.innerHTML = "";
         domElement.appendChild(this._canvas);
-        this._domElement = domElement;
+        this._domElement = this._canvas;
         this.setResolution();
         
         this._disable = true;
@@ -77,27 +77,25 @@ class PanoramaPreview{
         domElement.appendChild(this._img);
 
         this._img.onload = () => {
-            this._img.style.display = '';
-            this._canvas.style.display = 'none';
+            this._setDomElementToImage();
             this._renderer.forceContextLoss();
         }
 
         this._canvas.addEventListener('webglcontextlost', (event) => {
-            this._img.style.display = '';
-            this._canvas.style.display = 'none';
+            this._setDomElementToImage();
             this._setWebglState(false);
         });
 
         this._canvas.addEventListener('webglcontextrestored', (event) => {
-            this._img.style.display = 'none';
-            this._canvas.style.display = '';
+            this._setDomElementToCanvas();
             this._setWebglState(true);
         });
 
         this._animate = () => {
             if(this._disable){ //stop rendering
                 this._renderer.render(this._scene, this._camera);
-                this._img.src = this._domElement.firstElementChild.toDataURL();
+                if(this.domElement == this._canvas)
+                    this._img.src = this._canvas.toDataURL();
                 return;
             }
 
@@ -115,6 +113,17 @@ class PanoramaPreview{
 
             this._renderer.render(this._scene, this._camera);
         }
+    }
+
+    _setDomElementToCanvas(){
+        this._domElement = this._canvas;
+        this._img.style.display = 'none';
+        this._canvas.style.display = '';
+    }
+    _setDomElementToImage(){
+        this._domElement = this._img;
+        this._img.style.display = '';
+        this._canvas.style.display = 'none';
     }
 
     _setWebglState(state){
