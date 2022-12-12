@@ -5,83 +5,52 @@
         <title>neos sessions</title>
         <style>
             body { margin: 0; }
-            .thumbnail{ width: 256px; height: 200px; }
-            .thumbnail *{ width: 100%; height: 100%; }
             div#contents { display: flex; flex-wrap: wrap; }
+            .alt { background-color: #333333;}
         </style>
+        <link rel="stylesheet" href="css/sessionIcon.css">
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.js"></script>
+        <script src="js/neos_common.js"></script>
         <script src="js/panorama.js"></script>
+        <script src="js/sessionIcon.js"></script>
     </head>
     <body>
         <div id="contents"></div>
         <script>
             const contents = document.getElementById("contents");
-            var panos = [];
+            const alt = document.createElement("div");
+            alt.classList.add("alt");
+            var sessionIcons = [];
+            var panoramaLoads = [];
+            var panoramaLoader = () => {
+                requestAnimationFrame(panoramaLoader);
+                if(panoramaLoads.length > 0){
+                    if(2>(PanoramaPreview.ActiveWebGLClasses)){
+                        panoramaLoads.pop().panorama_load();
+                    }
+                }
+            };
+            panoramaLoader();
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.load();
+                    }
+                });
+            });
+
             fetch('/sessions.json')
                 .then((response) => response.json())
                 .then((data) => {
-                    let index = 0;
-                    let rep = () => {
-                        if(index < data.length){
-                            requestAnimationFrame(rep);
-                        }
-                        if(2>(PanoramaPreview.ActiveWebGLClasses)){
-                            addCanvas(data, index);
-                            index++;
-                        }
-                    };
-                    rep();
-                    
+                    data.forEach(e => {
+                        const sessionIcon = new SessionIcon(contents, e, alt);
+                        io.observe(sessionIcon.domElement);
+                        sessionIcon.domElement.load = () => {
+                            panoramaLoads.push(sessionIcon);
+                        };
+                    });
                 });
-            function addCanvas(data, index){
-                const div = document.createElement("div");
-                div.classList.add("thumbnail");
-                contents.appendChild(div);
-                const pano = createPanoramaViewer(div, data[index].thumbnail);
-                pano.setResolution();
-                // debug data
-                pano.data = data[index];
-                pano.reload = () => {
-                    pano.loadImage(pano.thumbnail);
-                }
-                panos.push(pano);
-            }
-
-            function createPanoramaViewer(div, img){
-                const pano = new PanoramaPreview(div);
-                pano.loadImage(img).then(()=>{
-                    //pano.enable();
-                });
-                let px = 0;
-                let tx = 0;
-                let ty = 0;
-                let speed = 1;
-                div.onmousemove = function(event){
-                    const x = event.offsetX/div.clientWidth-0.5;
-                    const y = event.offsetY/div.clientHeight-0.5;
-                    tx = -x*1.95;
-                    ty = -y*1.95;
-                    speed = 1;
-                    pano.enable();
-                }
-                div.onmouseout = function(event){
-                    tx = ty = speed = 0;
-                }
-                pano.beforeRender = (dt) => {
-                    const alpha = 0.05;
-                    pano.pitch = pano.pitch*(1-alpha) + ty*alpha;
-                    pano.yaw -= px;
-                    px = px*(1-alpha) + tx*alpha;
-                    pano.yaw += speed*dt+px;
-
-                    const err = Math.abs(px-tx)+Math.abs(pano.pitch-ty);
-                    if(err < 0.0001 && speed < 0.0001){
-                        pano.disable();
-                    }
-                }
-                return pano;
-            }
             
         </script>
     </body>
