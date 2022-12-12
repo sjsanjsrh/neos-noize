@@ -22,9 +22,9 @@
  * @property {number} roll camera angle
  * @property {function} beforeRender call before render()
  * @property {number} fov camera fov
- * @property {canvas} domElement
- * @property {boolean} WebGL_Active
- * @property {number} ActiveWebGLClasses
+ * @property {HTMLElement} domElement viewable element
+ * @property {boolean} WebGL_Active true if WebGL is active
+ * @property {number} ActiveWebGLClasses number of active PanoramaPreview classes
  * 
  * @param {HTMLElement} domElement
  */
