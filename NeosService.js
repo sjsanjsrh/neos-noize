@@ -20,6 +20,8 @@ class NeosService{
 
     /**
      * Run NeosService
+     * @instance
+     * @memberof NeosService
     */
     run(){
         setInterval(()=>{
@@ -33,7 +35,9 @@ class NeosService{
 
     /** 
      * Create sessions.json file
+     * @instance
      * @param {Array} sessions session object
+     * @memberof NeosService
      */
     createSessionsFile(sessions){
         const filePath = __dirname+"/"+config.sessions_file;
@@ -48,8 +52,10 @@ class NeosService{
 
     /**
      * NeosDB URL to Local URL
+     * @instance
      * @param {String} url NeosDB URL
      * @returns {String} Local URL
+     * @memberof NeosService
     */
     static neosDBToLocalURL(url){
         const filename = url.split("/").pop();
@@ -58,7 +64,9 @@ class NeosService{
 
     /**
      * Remove unused thumbnail images
+     * @instance
      * @param {Array} sessions session object
+     * @memberof NeosService
      */
     removeUnusedThumbnail(sessions){
         const dir = __dirname+"/"+config.thumbnail_dir;
@@ -77,7 +85,9 @@ class NeosService{
 
     /**
      * Update sessions thumbnail image to local directory
+     * @instance
      * @param {Array} sessions session object
+     * @memberof NeosService
      */
     updateSessionsThumbnail(sessions){
         const dir = __dirname+"/"+config.thumbnail_dir;
@@ -99,7 +109,9 @@ class NeosService{
 
     /**
      * Get sessions
+     * @instance
      * @returns {Promise} session object
+     * @memberof NeosService
      */
     getSessions(){
         let url = "https://api.neos.com/api/sessions"
@@ -122,7 +134,10 @@ class NeosService{
 
     /**
      * chack avaliable link
+     * @instance
      * @param {String} link link
+     * @returns {Boolean} avaliable link
+     * @memberof NeosService
      */
     static chackLink(link){
         return (link !== undefined && link !== null && link !== "" && link !== config.thumbnail_url)

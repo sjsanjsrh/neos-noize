@@ -23,52 +23,39 @@
  * @property {function} beforeRender call before render()
  * @property {number} fov camera fov
  * @property {canvas} domElement
- * @param {canvas} domElement
+ * @property {boolean} WebGL_Active
+ * @property {number} ActiveWebGLClasses
+ * 
+ * @param {HtmlElement} domElement
  */
 class PanoramaPreview{
-    /** @private */
     _fov = 90;              //default value
 
-    /** @member {number} camera angle */
     pitch = 0;
-    /** @member {number} camera angle */
     yaw = 0;
-    /** @member {number} camera angle */
     roll = 0;
 
-    /** @member {function} call before render() */
     beforeRender = (dt) => {};
 
-    /** @private */
     _WebGL_Active = false;
-    /** @private */
     static _ActiveWebGLClasses = 0;
 
-    /** @type {number} camera fov */
-    static get fov() {}
     get fov(){
         return this._camera.fov;
     }
     set fov(value){
         this._camera.fov = value;
     }
-    /** @return {canvas} domElement*/
     get domElement(){
         return this._domElement;
     }
-    /** @returns {boolean} */
     get WebGL_Active(){
         return this._WebGL_Active;
     }
-    /** @returns {number} number of active webgl classes*/
     static get ActiveWebGLClasses(){
         return this._ActiveWebGLClasses;
     }
 
-    /**
-     * 
-     * @param {HtmlElement} domElement
-     */
     constructor(domElement) {
         this._setWebglState(true);
         this._scene = new THREE.Scene();
@@ -139,7 +126,9 @@ class PanoramaPreview{
 
     /**
      * set size of camera view fit in the resolution
+     * @instance
      * @param {number} resolution max size of view if undefined, use default value
+     * @memberof PanoramaPreview
      */
     setResolution(resolution){
         if(resolution === undefined){
@@ -158,8 +147,10 @@ class PanoramaPreview{
     
     /**
      * set size of camera view
+     * @instance
      * @param {number} width 
      * @param {number} height 
+     * @memberof PanoramaPreview
      */
     setSize(width, height){
         this._renderer.setSize(width, height, false);
@@ -168,6 +159,8 @@ class PanoramaPreview{
 
     /**
      * start randering
+     * @instance
+     * @memberof PanoramaPreview
      */
     enable() {
         if(this._disable){
@@ -181,6 +174,8 @@ class PanoramaPreview{
 
     /**
      * stop randering
+     * @instance
+     * @memberof PanoramaPreview
      */
     disable() {
         this._disable = true;
@@ -188,6 +183,7 @@ class PanoramaPreview{
 
     /**
      * load image and set it as background
+     * @instance
      * @param {String} image image url
      * @returns {Promise} Promise object represents on the loaded texture
      * @promise {THREE.Texture} loaded texture
@@ -197,6 +193,7 @@ class PanoramaPreview{
      * .then((texture) => {
      *   panorama.enable();
      * })
+     * @memberof PanoramaPreview
      */
     loadImage(image) {
         return new Promise((resolve, reject) => {
