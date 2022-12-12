@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>neos sessions</title>
         <style>
-            body { margin: 0; }
+            body { margin: 0; color: white; background-color: black; }
             div#contents { display: flex; flex-wrap: wrap; }
             .alt { background-color: #333333;}
         </style>
@@ -23,11 +23,18 @@
             alt.classList.add("alt");
             var sessionIcons = [];
             var panoramaLoads = [];
+            var panoramaLoadCount = 0;
             var panoramaLoader = () => {
                 requestAnimationFrame(panoramaLoader);
                 if(panoramaLoads.length > 0){
-                    if(2>(PanoramaPreview.ActiveWebGLClasses)){
-                        panoramaLoads.pop().panorama_load();
+                    if(panoramaLoadCount <= 4){
+                        const current = panoramaLoads.shift()
+                        panoramaLoadCount++;
+                        current.panorama_load().then(
+                            () => panoramaLoadCount--
+                        ).catch((err)=>{
+                            panoramaLoads.push(current);
+                        });
                     }
                 }
             };
