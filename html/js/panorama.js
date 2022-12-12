@@ -26,7 +26,7 @@
  * @property {boolean} WebGL_Active
  * @property {number} ActiveWebGLClasses
  * 
- * @param {HtmlElement} domElement
+ * @param {HTMLElement} domElement
  */
 class PanoramaPreview{
     _fov = 90;              //default value
