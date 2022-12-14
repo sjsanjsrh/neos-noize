@@ -2,7 +2,7 @@
     "username": "",
     "password": "",
     "express": true,
-    "express_port": 80,
+    "express_port": 8080,
     "thumbnail_dir": "html/thumbnails/",
     "thumbnail_url": "thumbnails/",
     "sessions_file": "html/sessions.json",
