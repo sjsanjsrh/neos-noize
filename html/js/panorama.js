@@ -178,6 +178,7 @@ class PanoramaPreview{
             this._renderer.forceContextRestore();
         }
         
+        this._privtime = performance.now();
         this._animate();
     }
 
@@ -188,7 +189,6 @@ class PanoramaPreview{
      */
     disable() {
         this._disable = true;
-        this._privtime = performance.now();
     }
 
     /**
