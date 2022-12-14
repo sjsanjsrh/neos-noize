@@ -63,6 +63,46 @@ class SessionIcon{
     }
 
     /**
+     * update session icon data and dom element
+     * @param {obj} data data to update
+     * @returns 
+     * @memberof SessionIcon
+     */
+    update(data){
+        if(!data) return;
+
+        if(this.data.accessLevel != data.accessLevel){
+            this.domElement.classList.remove("AL_"+this.data.accessLevel);
+            this.domElement.classList.add("AL_"+this.data.accessLevel);
+        }
+        if(this.data.headlessHost != data.headlessHost){
+            this.domElement.classList.remove("headless");
+            if(this.data.headlessHost) this.domElement.classList.add("headless");
+        }
+        if(this.data.thumbnail != data.thumbnail){
+            if(this._panorama)
+                this._panorama.loadImage(this.data.thumbnail);
+        }
+
+        Object.keys(data).forEach((key)=>{
+            if(this.data[key] != data[key]){
+                if(this.dataElements[key]){
+                    this.dataElements[key].innerHTML = neos_text_to_html(data[key]);
+                }
+            }
+        });
+
+        this.data = data;
+    }
+    /**
+     * remove session icon dom element
+     * @memberof SessionIcon
+     */
+    remove(){
+        this.domElement.remove();
+    }
+
+    /**
      * load panorama image
      * @returns {Promise} promise object
      * @promise {PanoramaPreview} panorama object if success

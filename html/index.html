@@ -26,9 +26,16 @@
 
             panorama_load();
             sessionDataLoad();
-            setInterval(() => {
-                sessionDataUpdate();
-            }, 6000);
+            sessionDataUpdateLoop();
+
+            function sessionDataUpdateLoop(){
+                setTimeout(() => {
+                    sessionDataUpdate();
+                    sessionDataUpdateLoop();
+                }, 6000);
+            }
+
+
 
             function panorama_load(){
                 var panoramaLoadCount = 0;
@@ -72,26 +79,48 @@
                 rootMargin: "512px",
             });
 
-            function sessionDataLoad(){
-                fetch('/sessions.json')
+            async function sessionDataLoad(){
+                return await fetch('/sessions.json')
                     .then((response) => response.json())
                     .then((data) => {
                         data.forEach(e => {
-                            const sessionIcon = new SessionIcon(contents, e, alt);
-                            io.observe(sessionIcon.domElement);
-                            sessionIcon.domElement.addEventListener("click", () => {
-                                console.log(e);
+                            createSessionIcon(e);
+                        });
+                    });
+            }
+            
+            async function  sessionDataUpdate(){
+                return await fetch('/sessions.json')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        data.forEach(e => {
+                            const sessionIcon = sessionIcons.find((icon) => icon.data.normalizedSessionId === e.normalizedSessionId);
+                            if(sessionIcon){
+                                sessionIcon.update(e);
+                            }else{
+                                createSessionIcon(e);
+                            }
+
+                            sessionIcons.forEach((icon) => {
+                                if(!data.find((d) => d.normalizedSessionId === icon.data.normalizedSessionId)){
+                                    icon.remove();
+                                    sessionIcons = sessionIcons.filter((i) => i !== icon);
+                                }
                             });
-                            sessionIcon.domElement.load = () => {
-                                panoramaLoads.push(sessionIcon);
-                            };
                         });
                     });
             }
 
-            
-            function sessionDataUpdate(){
-
+            function createSessionIcon(data){
+                const sessionIcon = new SessionIcon(contents, data, alt);
+                io.observe(sessionIcon.domElement);
+                sessionIcon.domElement.addEventListener("click", () => {
+                    console.log(data);
+                });
+                sessionIcon.domElement.load = () => {
+                    panoramaLoads.push(sessionIcon);
+                };
+                sessionIcons.push(sessionIcon);
             }
             
         </script>
