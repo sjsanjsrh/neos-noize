@@ -188,6 +188,7 @@ class PanoramaPreview{
      */
     disable() {
         this._disable = true;
+        this._privtime = performance.now();
     }
 
     /**
