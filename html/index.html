@@ -23,34 +23,45 @@
             alt.classList.add("alt");
             var sessionIcons = [];
             var panoramaLoads = [];
-            var panoramaLoadCount = 0;
-            var panoramaLoadRTT = 0;
-            var panoramaLoader = () => {
-                if(panoramaLoads.length > 0){
-                    if(panoramaLoadCount <= 4){
-                        const current = panoramaLoads.shift()
-                        panoramaLoadCount++;
-                        current.panorama_load().then(
-                            () => {
-                                panoramaLoadCount--;
-                                panoramaLoadRTT = 0;
-                            }
-                        ).catch((err)=>{
-                            if(panoramaLoadRTT < 6){
-                                panoramaLoads.unshift(current);
-                                panoramaLoadRTT++;
-                            }else{
-                                panoramaLoadCount--;
-                                panoramaLoadRTT = 0;
-                            }
-                        });
-                    }else if(PanoramaPreview.ActiveWebGLClasses < 2){
-                        panoramaLoadCount = 0;
+
+            panorama_load();
+            sessionDataLoad();
+            setInterval(() => {
+                sessionDataUpdate();
+            }, 6000);
+
+            function panorama_load(){
+                var panoramaLoadCount = 0;
+                var panoramaLoadRTT = 0;
+                var panoramaLoader = () => {
+                    if(panoramaLoads.length > 0){
+                        if(panoramaLoadCount <= 4){
+                            const current = panoramaLoads.shift()
+                            panoramaLoadCount++;
+                            current.panorama_load().then(
+                                () => {
+                                    panoramaLoadCount--;
+                                    panoramaLoadRTT = 0;
+                                }
+                            ).catch((err)=>{
+                                if(panoramaLoadRTT < 6){
+                                    panoramaLoads.unshift(current);
+                                    panoramaLoadRTT++;
+                                }else{
+                                    panoramaLoadCount--;
+                                    panoramaLoadRTT = 0;
+                                }
+                            });
+                        }else if(PanoramaPreview.ActiveWebGLClasses < 2){
+                            panoramaLoadCount = 0;
+                        }
                     }
-                }
-                requestAnimationFrame(panoramaLoader);
-            };
-            panoramaLoader();
+                    requestAnimationFrame(panoramaLoader);
+                };
+                panoramaLoader();
+            }
+
+            
             const io = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     if(entry.isIntersecting) {
@@ -58,23 +69,30 @@
                     }
                 });
             },{
-            rootMargin: "512px",
+                rootMargin: "512px",
             });
 
-            fetch('/sessions.json')
-                .then((response) => response.json())
-                .then((data) => {
-                    data.forEach(e => {
-                        const sessionIcon = new SessionIcon(contents, e, alt);
-                        io.observe(sessionIcon.domElement);
-                        sessionIcon.domElement.addEventListener("click", () => {
-                            console.log(e);
+            function sessionDataLoad(){
+                fetch('/sessions.json')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        data.forEach(e => {
+                            const sessionIcon = new SessionIcon(contents, e, alt);
+                            io.observe(sessionIcon.domElement);
+                            sessionIcon.domElement.addEventListener("click", () => {
+                                console.log(e);
+                            });
+                            sessionIcon.domElement.load = () => {
+                                panoramaLoads.push(sessionIcon);
+                            };
                         });
-                        sessionIcon.domElement.load = () => {
-                            panoramaLoads.push(sessionIcon);
-                        };
                     });
-                });
+            }
+
+            
+            function sessionDataUpdate(){
+
+            }
             
         </script>
     </body>
