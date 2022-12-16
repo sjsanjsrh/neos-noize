@@ -45,15 +45,18 @@ div.sessionIcon > div{
 .sessionIcon .hostUsername{
     order :2;
 }
-.sessionIcon .hostUsername::before{
-    content: "Host :\00a0"
-}
+.sessionIcon.AL_Anyone > .hostUsername::before{ content: "🌐\00a0" }
+.sessionIcon.AL_RegisteredUsers > .hostUsername::before{ content: "🌎\00a0" }
+.sessionIcon.headless > .hostUsername::before{ content: "🖥\00a0" }
+.sessionIcon.AL_Anyone.headless > .hostUsername::before{ content: "🖥🌐\00a0" }
+.sessionIcon.AL_RegisteredUsers.headless > .hostUsername::before{ content: "🖥🌎\00a0" }
+
 .sessionIcon .activeUsers{
-    font-size: 0.5em;
+    font-size: 0.8em;
     order :3;
 }
 .sessionIcon .activeUsers::before{
-    content: "ActiveUsers :\00a0"
+    content: "👥\00a0"
 }
 
 @keyframes marquee {
