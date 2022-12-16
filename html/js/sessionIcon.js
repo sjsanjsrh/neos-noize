@@ -50,7 +50,7 @@ class SessionIcon{
         function addDataElement(elements, parent, name){
             const element = addElement(parent,name);
             elements[name] = element;
-            element.innerHTML = neos_text_to_html(data[name]);
+            element.innerHTML = neos_text_to_html(data[name],"div");
             return element;
         }
 
