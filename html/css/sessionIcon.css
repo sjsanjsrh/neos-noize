@@ -59,6 +59,96 @@ div.sessionIcon > div{
     content: "👥\00a0"
 }
 
+.sessionIcon.detail .joinedUsers{
+    display: inherit;
+}
+.sessionIcon.detail .joinedUsers::before{
+    content: "JoinedUsers :\00a0"
+}
+.sessionIcon.detail .maxUsers{
+    display: inherit;
+}
+.sessionIcon.detail .maxUsers::before{
+    content: "MaxUsers :\00a0"
+}
+.sessionIcon.detail .sessionUsers{
+    display: block;
+}
+.sessionIcon.detail .sessionUsers::before{
+    content: "SessionUsers :\00a0"
+}
+.sessionIcon.detail .tags{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.sessionIcon.detail .tags::before{
+    content: "Tags :\00a0";
+    white-space: nowrap;
+}
+.sessionIcon.detail .neosVersion{
+    display: inherit;
+}
+.sessionIcon.detail .neosVersion::before{
+    content: "NeosVersion :\00a0"
+}
+.sessionIcon.detail .sessionURLs{
+    display: block;
+}
+.sessionIcon.detail .sessionURLs::before{
+    content: "SessionID :\00a0"
+}
+
+.sessionIcon .joinedUsers{
+    display: none;
+    margin: 4px;
+    order :4;
+}
+.sessionIcon .maxUsers{
+    display: none;
+    margin: 4px;
+    order :4;
+}
+.sessionIcon .sessionUsers{
+    display: none;
+    margin: 4px;
+    order :4;
+}
+.sessionIcon .sessionUsers > div.owner::before{
+    content: "👑";
+}
+.sessionIcon .sessionUsers > div{
+    color: gray;
+}
+.sessionIcon .sessionUsers > div.present{
+    color: white;
+}
+.sessionIcon .tags{
+    display: none;
+    margin: 4px;
+    order :4;
+    max-width: var(--icon-width);
+    white-space: normal;
+}
+.sessionIcon .tags > div{
+    color: gray;
+    margin: 4px;
+    padding: 0 4px;
+    font-size: 0.8em;
+    background-color: #ffffff15;
+}
+.sessionIcon .neosVersion{
+    display: none;
+    margin: 4px;
+    order :4;
+}
+.sessionIcon .sessionURLs{
+    display: none;
+    margin: 4px;
+    order :4;
+}
+
+
 @keyframes marquee {
     0% { transform: translateX(0%); }
     10% { transform: translateX(0%); }

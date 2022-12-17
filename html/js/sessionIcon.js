@@ -2,7 +2,7 @@
  * implements the visible session icon
  * @file sessionIcon.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.0.0
+ * @version 1.1.0
  * @requires panorama.js
  * @requires neos_common.js
  */
@@ -44,8 +44,58 @@ class SessionIcon{
         addDataElement(this.dataElements, sessionIcon,"name");
         addDataElement(this.dataElements, sessionIcon,"hostUsername");
         addDataElement(this.dataElements, sessionIcon,"activeUsers");
-        // addDataElement(this.dataElements, sessionIcon,"joinedUsers");
-        // addDataElement(this.dataElements, sessionIcon,"maxUsers")
+
+        addDataElement(this.dataElements, sessionIcon,"joinedUsers");
+        addDataElement(this.dataElements, sessionIcon,"maxUsers");
+        addUserDataElements(this.dataElements, sessionIcon,"sessionUsers");
+        addDataArrayElements(this.dataElements, sessionIcon,"tags");
+        addDataElement(this.dataElements, sessionIcon,"neosVersion");
+        addSessionURLElements(this.dataElements, sessionIcon,"sessionURLs");
+
+        function addSessionURLElements(elements, parent, name){
+            const element = addElement(parent,name);
+            if(data[name]){
+                const e = document.createElement("a");
+                e.innerText = data.sessionId;
+                const url = data.sessionURLs.find((str)=>/^lnl-nat:\/\/\//.test(str));
+                if(url) e.href = url;
+                element.appendChild(e);
+            }
+            elements[name] = element;
+            return element;
+        }
+
+
+        function addDataArrayElements(elements, parent, name){
+            const element = addElement(parent,name);
+            if(data[name]){
+                data[name].forEach((d)=>{
+                    const e = document.createElement("div");
+                    e.innerText = d;
+                    element.appendChild(e);
+                });
+            };
+            elements[name] = element;
+            return element;
+        }
+
+        function addUserDataElements(elements, parent, name){
+            const element = addElement(parent,name);
+            if(data[name]){
+                data[name].forEach((user)=>{
+                    const e = document.createElement("div");
+                    e.innerText = user.username;
+                    if(user.userID === data.hostUserId) e.classList.add("owner");
+                    if(user.isPresent) e.classList.add("present");
+                    if(user.outputDevice) e.classList.add(`outputDevice_${user.outputDevice}`);
+                    e.classList.add(`${user.userID}`);
+                    element.appendChild(e);
+                });
+            };
+            elements[name] = element;
+            return element;
+        }
+
 
         function addDataElement(elements, parent, name){
             const element = addElement(parent,name);
@@ -79,12 +129,56 @@ class SessionIcon{
             this.domElement.classList.remove("headless");
             if(this.data.headlessHost) this.domElement.classList.add("headless");
         }
+
         if(this.data.thumbnail != data.thumbnail){
             if(this._panorama)
                 this._panorama.loadImage(this.data.thumbnail);
         }
+        if(JSON.stringify(this.data.sessionUsers) !== JSON.stringify(data.sessionUsers)){
+            let newusers = data.sessionUsers;
+            this.data.sessionUsers.forEach((user)=>{
+                const newuser = data.sessionUsers.find((u)=>u.userID === user.userID)
+                const e = this.dataElements.sessionUsers.querySelector(`.${user.userID}`);
+                newusers = newusers.filter((u)=>u.userID !== user.userID);
+                if(e){
+                    if(!newuser){ // user left
+                        e.remove();
+                    }else{ // user updated
+                            if(user.username !== newuser.username) e.innerText = newuser.username;
+                            if(user.isPresent !== newuser.isPresent){
+                                if(newuser.isPresent) e.classList.add("present");
+                                else e.classList.remove("present");
+                            }
+                            if(user.outputDevice !== newuser.outputDevice){
+                                if(user.outputDevice) e.classList.remove(`outputDevice_${user.outputDevice}`);
+                                if(newuser.outputDevice) e.classList.add(`outputDevice_${newuser.outputDevice}`);
+                            }
+                    }
+                }
+            });
+            newusers.forEach((newuser)=>{ // new user joined
+                const e = document.createElement("div");
+                e.innerText = newuser.username;
+                if(newuser.userID === data.hostUserId) e.classList.add("owner");
+                if(newuser.isPresent) e.classList.add("present");
+                if(newuser.outputDevice) e.classList.add(`outputDevice_${newuser.outputDevice}`);
+                e.classList.add(`${newuser.userID}`);
+                this.dataElements.sessionUsers.appendChild(e);
+            });
+        }
 
+        if(JSON.stringify(this.data.tags) !== JSON.stringify(data.tags)){
+            this.dataElements.tags.innerHTML = "";
+            data.tags.forEach((tag)=>{
+                const e = document.createElement("div");
+                e.innerText = tag;
+                this.dataElements.tags.appendChild(e);
+            });
+        }
+
+        let gnore = ["thumbnail","sessionUsers","tags","sessionURLs"];
         Object.keys(data).forEach((key)=>{
+            if(gnore.includes(key)) return;
             if(this.data[key] != data[key]){
                 if(this.dataElements[key]){
                     this.dataElements[key].innerHTML = neos_text_to_html(data[key]);
