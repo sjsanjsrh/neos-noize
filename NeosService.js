@@ -27,8 +27,8 @@ class NeosService{
         setInterval(()=>{
             this.getSessions().then((sessions)=>{
                 this.updateSessionsThumbnail(sessions);
-                this.removeUnusedThumbnail(sessions);
                 this.createSessionsFile(sessions);
+                this.removeUnusedThumbnail(sessions);
             });
         }, config.update_interval);
     }
