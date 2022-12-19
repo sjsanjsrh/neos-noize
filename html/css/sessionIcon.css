@@ -95,6 +95,10 @@ div.sessionIcon > div{
 .sessionIcon.detail .sessionId{
     display: block;
 }
+.sessionIcon.detail .sessionId > *{
+    display: block;
+    white-space: normal;
+}
 .sessionIcon.detail .sessionId::before{
     content: "SessionID :\00a0"
 }
