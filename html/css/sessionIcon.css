@@ -92,10 +92,10 @@ div.sessionIcon > div{
 .sessionIcon.detail .neosVersion::before{
     content: "NeosVersion :\00a0"
 }
-.sessionIcon.detail .sessionURLs{
+.sessionIcon.detail .sessionId{
     display: block;
 }
-.sessionIcon.detail .sessionURLs::before{
+.sessionIcon.detail .sessionId::before{
     content: "SessionID :\00a0"
 }
 
@@ -142,7 +142,7 @@ div.sessionIcon > div{
     margin: 4px;
     order :4;
 }
-.sessionIcon .sessionURLs{
+.sessionIcon .sessionId{
     display: none;
     margin: 4px;
     order :4;

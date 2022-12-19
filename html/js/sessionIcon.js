@@ -2,7 +2,7 @@
  * implements the visible session icon
  * @file sessionIcon.js
  * @author Sinduy <sjsanjsrh@naver.com>
- * @version 1.1.1
+ * @version 1.1.2
  * @requires panorama.js
  * @requires neos_common.js
  */
@@ -58,7 +58,6 @@ class SessionIcon{
                 const e = document.createElement("a");
                 e.innerText = data.sessionId;
                 e.href = "neos:?world=neos-session:///"+data.sessionId;
-
                 element.appendChild(e);
             }
             elements[name] = element;
@@ -176,7 +175,7 @@ class SessionIcon{
             });
         }
 
-        let gnore = ["thumbnail","sessionUsers","tags","sessionURLs"];
+        let gnore = ["thumbnail","sessionUsers","tags"];
         Object.keys(data).forEach((key)=>{
             if(gnore.includes(key)) return;
             if(this.data[key] != data[key]){
