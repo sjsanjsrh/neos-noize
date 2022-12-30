@@ -39,15 +39,23 @@
                 }, 6000);
             }
 
+            function sort_panorama(){
+                panoramaLoads.sort((a, b) => {;
+                    return a.domElement.getDistanceAtCenter() - b.domElement.getDistanceAtCenter();
+                });
+            }
 
+            window.addEventListener('scroll',e=>{
+                sort_panorama();
+            });
 
             function panorama_load(){
                 var panoramaLoadCount = 0;
                 var panoramaLoadRTT = 0;
                 var panoramaLoader = () => {
                     if(panoramaLoads.length > 0){
-                        if(panoramaLoadCount <= 4){
-                            const current = panoramaLoads.shift()
+                        if(panoramaLoadCount <= 4 && panoramaLoads[0].domElement.getDistanceAtCenter() < window.innerHeight*2.0){
+                            const current = panoramaLoads.shift();
                             panoramaLoadCount++;
                             current.panorama_load().then(
                                 () => {
@@ -71,17 +79,6 @@
                 };
                 panoramaLoader();
             }
-
-            
-            const io = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if(entry.isIntersecting) {
-                        entry.target.load();
-                    }
-                });
-            },{
-                rootMargin: "512px",
-            });
 
             async function sessionDataLoad(){
                 return await fetch('/sessions.json')
@@ -117,7 +114,6 @@
 
             function createSessionIcon(data){
                 const sessionIcon = new SessionIcon(contents, data, alt);
-                io.observe(sessionIcon.domElement);
                 sessionIcon.domElement.addEventListener("click", () => {
                     if(sessionIcon.domElement.classList.contains("detail")){
                         sessionIcon.domElement.classList.remove("detail");
@@ -126,9 +122,17 @@
                     }
                     console.log(data);
                 });
+                sessionIcon.domElement.getDistanceAtCenter = () => {
+                    const rect = sessionIcon.domElement.getBoundingClientRect();
+                    const y = Math.abs(rect.top - window.innerHeight / 2 + rect.height / 2);
+                    const x = Math.abs(rect.left - window.innerWidth / 2 + rect.width / 2);
+                    return y+x;
+                };
                 sessionIcon.domElement.load = () => {
                     panoramaLoads.push(sessionIcon);
+                    sort_panorama();
                 };
+                sessionIcon.domElement.load();
                 sessionIcons.push(sessionIcon);
             }
             
