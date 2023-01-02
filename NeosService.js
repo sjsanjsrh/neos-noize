@@ -7,7 +7,7 @@
 const Neos = require("@bombitmanbomb/neosjs");
 const fetch = require('node-fetch');
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+const config = require('./ConfigLoad.js');
 
 /**
  * NeosAPI wrapper

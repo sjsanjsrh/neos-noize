@@ -5,7 +5,7 @@
 */
 
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+const config = require('./ConfigLoad.js');
 const NeosService = require("./NeosService.js");
 
 if(config.express){
