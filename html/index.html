@@ -29,10 +29,12 @@
             var panoramaLoads = [];
 
             panorama_load();
-            sessionDataLoad();
+            sessionDataLoad().then(() => {
+                sort_sessionIcon("sessionBeginTime", false);
+            })
             sessionDataUpdateLoop();
 
-            function sessionDataUpdateLoop(){
+            async function sessionDataUpdateLoop(){
                 setTimeout(() => {
                     sessionDataUpdate();
                     sort_sessionIcon();
@@ -41,13 +43,19 @@
             }
 
             
-            function sort_sessionIcon(){
+            function sort_sessionIcon(dataName, littleToBig = true){
                 sessionIcons.sort((a, b) => {
-                    return Date.parse(a.data.lastUpdate) - Date.parse(b.data.lastUpdate);
+                    if(!littleToBig){
+                        return Date.parse(b.data[dataName]) - Date.parse(a.data[dataName]);
+                    }
+                    else{
+                        return Date.parse(a.data[dataName]) - Date.parse(b.data[dataName]);
+                    }
                 });
                 for(i = 0; i < sessionIcons.length; i++){
                     sessionIcons[i].domElement.style.order = i;
                 }
+                sort_panorama();
             }
 
             function sort_panorama(){
