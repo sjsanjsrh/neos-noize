@@ -35,8 +35,19 @@
             function sessionDataUpdateLoop(){
                 setTimeout(() => {
                     sessionDataUpdate();
+                    sort_sessionIcon();
                     sessionDataUpdateLoop();
                 }, 6000);
+            }
+
+            
+            function sort_sessionIcon(){
+                sessionIcons.sort((a, b) => {
+                    return Date.parse(a.data.lastUpdate) - Date.parse(b.data.lastUpdate);
+                });
+                for(i = 0; i < sessionIcons.length; i++){
+                    sessionIcons[i].domElement.style.order = i;
+                }
             }
 
             function sort_panorama(){
