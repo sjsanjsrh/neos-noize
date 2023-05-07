@@ -114,7 +114,7 @@ class NeosService{
      * @memberof NeosService
      */
     getSessions(){
-        let url = "https://api.neos.com/api/sessions"
+        let url = "https://cloudx.azurewebsites.net/api/sessions"
         return new Promise((resolve, reject) => {
             fetch(url, { method: "Get" })
             .then(res => res.json())
